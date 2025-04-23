@@ -9,6 +9,15 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['*'],
+    },
+  },
+  webpack: (config) => {
+    config.externals = [...config.externals, 'bcrypt']
+    return config
+  },
 }
 
 export default nextConfig
