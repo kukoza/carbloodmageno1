@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useMediaQuery } from "@/hooks/use-mobile"
 import { ChevronLeft, User, Mail, Lock, Building } from "lucide-react"
+import { toast } from "@/components/ui/use-toast"
+import { Toaster } from "@/components/ui/toaster"
 
 export default function Register() {
   const router = useRouter()
@@ -55,34 +57,54 @@ export default function Register() {
   }
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {}
+    let isValid = true
+    const newErrors: { [key: string]: string } = {}
 
+    // Validate name
     if (!formData.name.trim()) {
-      newErrors.name = "กรุณากรอกชื่อ-นามสกุล"
+      newErrors.name = "กรุณากรอกชื่อ"
+      isValid = false
+    } else if (formData.name.length < 2) {
+      newErrors.name = "ชื่อต้องมีความยาวอย่างน้อย 2 ตัวอักษร"
+      isValid = false
     }
 
-    if (!formData.email.trim()) {
+    // Validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!formData.email) {
       newErrors.email = "กรุณากรอกอีเมล"
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "รูปแบบอีเมลไม่ถูกต้อง"
+      isValid = false
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = "กรุณากรอกอีเมลให้ถูกต้อง"
+      isValid = false
     }
 
+    // Validate password
     if (!formData.password) {
       newErrors.password = "กรุณากรอกรหัสผ่าน"
+      isValid = false
     } else if (formData.password.length < 6) {
-      newErrors.password = "รหัสผ่านต้องมีอย่างน้อย 6 ตัวอักษร"
+      newErrors.password = "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร"
+      isValid = false
     }
 
-    if (formData.password !== formData.confirmPassword) {
+    // Validate confirm password
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "กรุณายืนยันรหัสผ่าน"
+      isValid = false
+    } else if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "รหัสผ่านไม่ตรงกัน"
+      isValid = false
     }
 
+    // Validate department
     if (!formData.department) {
       newErrors.department = "กรุณาเลือกแผนก"
+      isValid = false
     }
 
     setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+    return isValid
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -95,6 +117,15 @@ export default function Register() {
     setIsSubmitting(true)
 
     try {
+      // ตรวจสอบว่า email ซ้ำหรือไม่
+      const checkEmailResponse = await fetch(`/api/auth/check-email?email=${encodeURIComponent(formData.email)}`)
+      const emailData = await checkEmailResponse.json()
+
+      if (emailData.exists) {
+        setErrors({ email: "อีเมลนี้ถูกใช้งานแล้ว กรุณาใช้อีเมลอื่น" })
+        return
+      }
+
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
@@ -114,6 +145,12 @@ export default function Register() {
         throw new Error(data.error || "เกิดข้อผิดพลาดในการลงทะเบียน")
       }
 
+      // แสดงข้อความแจ้งเตือนว่าลงทะเบียนสำเร็จ
+      toast({
+        title: "ลงทะเบียนสำเร็จ",
+        description: "กรุณาเข้าสู่ระบบเพื่อใช้งาน",
+      })
+
       // Redirect to login page after successful registration
       router.push("/login?registered=true")
     } catch (error: any) {
@@ -126,6 +163,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-muted/30">
+      <Toaster />
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <div className="flex items-center gap-2">

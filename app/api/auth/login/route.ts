@@ -93,6 +93,9 @@ export async function POST(request: Request) {
     })
   } catch (error) {
     console.error("Login error:", error)
-    return NextResponse.json({ error: "Authentication failed" }, { status: 500 })
+    return NextResponse.json({ 
+      error: "การเข้าสู่ระบบล้มเหลว กรุณาตรวจสอบอีเมลและรหัสผ่านของคุณ",
+      details: error instanceof Error ? error.message : String(error)
+    }, { status: 401 })
   }
 }
