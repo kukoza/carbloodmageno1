@@ -30,7 +30,11 @@ export function middleware(request: NextRequest) {
 
       try {
         // ตรวจสอบ token และ role
-        const decoded = verify(token, process.env.JWT_SECRET || "your-secret-key") as DecodedToken
+        const decoded = verify(token, process.env.JWT_SECRET || "your-secret-key", {
+          algorithms: ["HS256"],
+          maxAge: "1d"
+        }) as DecodedToken
+
         if (decoded.role !== "ผู้ดูแลระบบ") {
           return NextResponse.redirect(new URL("/user/dashboard", request.url))
         }
@@ -52,7 +56,10 @@ export function middleware(request: NextRequest) {
 
       try {
         // ตรวจสอบ token
-        verify(token, process.env.JWT_SECRET || "your-secret-key") as DecodedToken
+        verify(token, process.env.JWT_SECRET || "your-secret-key", {
+          algorithms: ["HS256"],
+          maxAge: "1d"
+        }) as DecodedToken
       } catch (error) {
         // ถ้า token ไม่ถูกต้อง ให้ลบ cookie และ redirect ไปหน้า login
         const response = NextResponse.redirect(new URL("/login", request.url))
