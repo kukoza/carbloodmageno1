@@ -37,15 +37,18 @@ export default function Login() {
     e.preventDefault()
     setError("")
 
-    if (!email || !password) {
-      setError("กรุณากรอกอีเมลและรหัสผ่าน")
+    const formData = { email, password }
+
+    const isValid = validateForm()
+
+    if (!isValid) {
       return
     }
 
     setIsSubmitting(true)
 
     try {
-      console.log("Attempting login with:", { email })
+      console.log("กำลังพยายามเข้าสู่ระบบด้วย:", { email })
 
       // ส่งคำขอไปยัง API เพื่อตรวจสอบข้อมูลผู้ใช้
       const response = await fetch("/api/auth/login", {
@@ -57,9 +60,9 @@ export default function Login() {
         credentials: "include", // ให้แน่ใจว่าจะรับ cookie กลับมา
       })
 
-      console.log("Login response status:", response.status)
+      console.log("สถานะการตอบกลับ:", response.status)
       const data = await response.json()
-      console.log("Login response data:", data)
+      console.log("ข้อมูลการตอบกลับ:", data)
 
       if (!response.ok) {
         throw new Error(data.error || "เกิดข้อผิดพลาดในการเข้าสู่ระบบ")
@@ -67,18 +70,45 @@ export default function Login() {
 
       // นำทางไปยังหน้าที่เหมาะสมตามบทบาทของผู้ใช้  
       if (data.user.role === "ผู้ดูแลระบบ") {
-        console.log("Redirecting to admin dashboard")
+        console.log("กำลังนำทางไปยังแดชบอร์ดผู้ดูแลระบบ")
         router.push("/admin/dashboard")
       } else {
-        console.log("Redirecting to user dashboard")
+        console.log("กำลังนำทางไปยังแดชบอร์ดผู้ใช้")
         router.push("/user/dashboard")
       }
     } catch (error: any) {
-      console.error("Login error:", error)
+      console.error("เกิดข้อผิดพลาดในการเข้าสู่ระบบ:", error)
       setError(error.message || "อีเมลหรือรหัสผ่านไม่ถูกต้อง")
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  const validateForm = () => {
+    let isValid = true
+    const newErrors: { [key: string]: string } = {}
+
+    // Validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!email) {
+      newErrors.email = "กรุณากรอกอีเมล"
+      isValid = false
+    } else if (!emailRegex.test(email)) {
+      newErrors.email = "กรุณากรอกอีเมลให้ถูกต้อง"
+      isValid = false
+    }
+
+    // Validate password
+    if (!password) {
+      newErrors.password = "กรุณากรอกรหัสผ่าน"
+      isValid = false
+    } else if (password.length < 6) {
+      newErrors.password = "รหัสผ่านต้องมีความยาวอย่างน้อย 6 ตัวอักษร"
+      isValid = false
+    }
+
+    setError(Object.values(newErrors).join("\n") || "")
+    return isValid
   }
 
   return (

@@ -101,7 +101,8 @@ export default function BusinessCardPage() {
 
         // สร้าง URL สำหรับแชร์
         if (data.id) {
-          const baseUrl = window.location.origin
+          // ใช้ URL แบบเต็ม (absolute URL)
+          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://doc.nozomi-th.com"
           setShareUrl(`${baseUrl}/share/business-card/${data.id}`)
         }
       } catch (err) {
