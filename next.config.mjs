@@ -21,8 +21,9 @@ const nextConfig = {
   basePath: '',
   assetPrefix: '',
   output: 'standalone',
-  distDir: '.next',
+  distDir: 'dist',
   trailingSlash: true,
+  poweredByHeader: false,
 }
 
 export default nextConfig
