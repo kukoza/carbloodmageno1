@@ -1,19 +1,22 @@
 #!/bin/bash
 
-# Install dependencies
-npm install
-
 # Build the application
 npm run build
 
-# Install PM2 globally if not installed
-npm install -g pm2
+# Copy files to Plesk directory
+cp -r .next /var/www/vhosts/doc.nozomi-th.com/httpdocs/
+cp -r public /var/www/vhosts/doc.nozomi-th.com/httpdocs/
+cp package.json /var/www/vhosts/doc.nozomi-th.com/httpdocs/
+cp package-lock.json /var/www/vhosts/doc.nozomi-th.com/httpdocs/
+cp ecosystem.config.js /var/www/vhosts/doc.nozomi-th.com/httpdocs/
+cp nginx.conf /var/www/vhosts/doc.nozomi-th.com/httpdocs/
 
-# Start the application with PM2
-pm2 start ecosystem.config.js
+# Install dependencies
+cd /var/www/vhosts/doc.nozomi-th.com/httpdocs
+npm install --production
 
-# Save PM2 process list
-pm2 save
+# Restart PM2
+pm2 restart car-booking-system
 
-# Setup PM2 to start on system boot
-pm2 startup 
+# Reload Nginx
+nginx -s reload 

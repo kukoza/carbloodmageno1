@@ -2,9 +2,9 @@ import mysql from "mysql2/promise"
 
 // กำหนดค่าการเชื่อมต่อ
 const dbConfig = {
-  host: process.env.DB_HOST || "localhost",
-  user: process.env.DB_USER || "car_booking",
-  password: process.env.DB_PASSWORD || "g40qX1^z7",
+  host: "43.229.132.209",
+  user: process.env.DB_USER || "rootforbook",
+  password: process.env.DB_PASSWORD || "534jj7?cA",
   database: process.env.DB_NAME || "carbookingsystem",
   waitForConnections: true,
   connectionLimit: 10,
