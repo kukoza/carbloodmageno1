@@ -33,3 +33,5 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
         </rewrite>
     </system.webServer>
 </configuration>" > web.config 
+
+chmod +x plesk-deploy.sh 
