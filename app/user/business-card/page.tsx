@@ -101,8 +101,8 @@ export default function BusinessCardPage() {
 
         // สร้าง URL สำหรับแชร์
         if (data.id) {
-          const baseUrl = window.location.origin
-          setShareUrl(`${baseUrl}/share/business-card/${data.id}`)
+          // ใช้ URL แบบสัมพัทธ์แทนการใช้ window.location.origin
+          setShareUrl(`/share/business-card/${data.id}`)
         }
       } catch (err) {
         console.error("Error loading business card:", err)
