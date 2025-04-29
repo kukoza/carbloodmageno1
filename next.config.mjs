@@ -27,9 +27,8 @@ const nextConfig = {
     ]
   },
   output: 'standalone',
-  distDir: 'dist',
+  distDir: '.next',
   trailingSlash: true,
-  poweredByHeader: false,
 }
 
 export default nextConfig

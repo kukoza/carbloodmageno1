@@ -3,19 +3,20 @@
 # Build the application
 npm run build
 
-# สร้างโฟลเดอร์ปลายทาง (ถ้ายังไม่มี)
-mkdir -p "C:\inetpub\vhosts\doc.nozomi-th.com\httpdocs"
+# Copy files to Plesk directory
+cp -r .next /var/www/vhosts/doc.nozomi-th.com/httpdocs/
+cp -r public /var/www/vhosts/doc.nozomi-th.com/httpdocs/
+cp package.json /var/www/vhosts/doc.nozomi-th.com/httpdocs/
+cp package-lock.json /var/www/vhosts/doc.nozomi-th.com/httpdocs/
+cp ecosystem.config.js /var/www/vhosts/doc.nozomi-th.com/httpdocs/
+cp nginx.conf /var/www/vhosts/doc.nozomi-th.com/httpdocs/
 
-# คัดลอกไฟล์ทั้งหมดไปยังโฟลเดอร์ปลายทาง
-cp -r dist/* "C:\inetpub\vhosts\doc.nozomi-th.com\httpdocs\"
-cp -r public/* "C:\inetpub\vhosts\doc.nozomi-th.com\httpdocs\public\"
-cp package.json "C:\inetpub\vhosts\doc.nozomi-th.com\httpdocs\"
-cp web.config "C:\inetpub\vhosts\doc.nozomi-th.com\httpdocs\"
-cp server.js "C:\inetpub\vhosts\doc.nozomi-th.com\httpdocs\"
-
-# ติดตั้ง dependencies
-cd "C:\inetpub\vhosts\doc.nozomi-th.com\httpdocs"
+# Install dependencies
+cd /var/www/vhosts/doc.nozomi-th.com/httpdocs
 npm install --production
 
-# รีสตาร์ท IIS
-iisreset 
+# Restart PM2
+pm2 restart car-booking-system
+
+# Reload Nginx
+nginx -s reload 
