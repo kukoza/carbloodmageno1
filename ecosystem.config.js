@@ -4,7 +4,7 @@ module.exports = {
       name: 'car-booking-system',
       script: 'node_modules/next/dist/bin/next',
       args: 'start',
-      cwd: './',
+      cwd: './httpdocs',
       env: {
         NODE_ENV: 'production',
         PORT: 3000,
