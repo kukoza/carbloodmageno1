@@ -18,8 +18,14 @@ const nextConfig = {
     config.externals = [...config.externals, 'bcrypt']
     return config
   },
-  basePath: '',
-  assetPrefix: '',
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://43.229.132.209/:path*',
+      },
+    ]
+  },
   output: 'standalone',
   distDir: 'dist',
   trailingSlash: true,
