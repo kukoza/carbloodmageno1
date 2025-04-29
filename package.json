@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "postinstall": "npm run build",
     "setup-db": "node scripts/setup-database.js",
     "reset-admin": "node scripts/reset-admin-password.js",
     "create-upload-dirs": "node scripts/create-upload-dirs.js",

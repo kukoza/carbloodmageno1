@@ -1,37 +1,42 @@
 #!/bin/bash
 
-# Install dependencies
+# ตั้งค่า Node.js version
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+nvm use 18
+
+# ติดตั้ง dependencies
 npm install
 
-# Build the application
-npm run build
+# Build project
+NODE_ENV=production npm run build
 
-# Create a production build
-npm run build
+# สร้างโฟลเดอร์ถ้ายังไม่มี
+mkdir -p /var/www/vhosts/doc.nozomi-th.com/httpdocs
 
-# Create a .htaccess file for Plesk
-echo "RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ /index.html [L]" > .htaccess
+# คัดลอกไฟล์ที่จำเป็น
+cp -r .next /var/www/vhosts/doc.nozomi-th.com/httpdocs/
+cp -r public /var/www/vhosts/doc.nozomi-th.com/httpdocs/
+cp -r node_modules /var/www/vhosts/doc.nozomi-th.com/httpdocs/
+cp package.json /var/www/vhosts/doc.nozomi-th.com/httpdocs/
+cp next.config.mjs /var/www/vhosts/doc.nozomi-th.com/httpdocs/
 
-# Create a web.config file for Plesk
-echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<configuration>
-    <system.webServer>
-        <rewrite>
-            <rules>
-                <rule name=\"Next.js Routes\" stopProcessing=\"true\">
-                    <match url=\".*\" />
-                    <conditions logicalGrouping=\"MatchAll\">
-                        <add input=\"{REQUEST_FILENAME}\" matchType=\"IsFile\" negate=\"true\" />
-                        <add input=\"{REQUEST_FILENAME}\" matchType=\"IsDirectory\" negate=\"true\" />
-                    </conditions>
-                    <action type=\"Rewrite\" url=\"/\" />
-                </rule>
-            </rules>
-        </rewrite>
-    </system.webServer>
-</configuration>" > web.config 
+# สร้าง pm2 config
+cat > /var/www/vhosts/doc.nozomi-th.com/httpdocs/ecosystem.config.js << EOL
+module.exports = {
+  apps: [{
+    name: 'car-booking',
+    script: 'node_modules/next/dist/bin/next',
+    args: 'start',
+    env: {
+      NODE_ENV: 'production',
+      PORT: 3000
+    }
+  }]
+}
+EOL
 
-chmod +x plesk-deploy.sh 
+# รีสตาร์ท PM2
+cd /var/www/vhosts/doc.nozomi-th.com/httpdocs
+pm2 delete car-booking || true
+pm2 start ecosystem.config.js 

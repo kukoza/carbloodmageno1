@@ -29,6 +29,10 @@ const nextConfig = {
   output: 'standalone',
   distDir: '.next',
   trailingSlash: true,
+  poweredByHeader: false,
+  env: {
+    NEXT_PUBLIC_API_URL: 'https://doc.nozomi-th.com/api',
+  },
 }
 
 export default nextConfig
