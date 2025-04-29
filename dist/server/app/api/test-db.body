@@ -1,1 +1,0 @@
-{"success":true,"message":"Database connection successful","result":[{"test":1}],"env":{"DB_HOST":"not set","DB_USER":"not set","DB_NAME":"not set"}}
