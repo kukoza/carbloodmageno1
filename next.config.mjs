@@ -8,10 +8,11 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
+    domains: ['doc.nozomi-th.com', '43.229.132.209'],
   },
   experimental: {
     serverActions: {
-      allowedOrigins: ['*'],
+      allowedOrigins: ['doc.nozomi-th.com', '43.229.132.209'],
     },
   },
   webpack: (config) => {
@@ -32,6 +33,10 @@ const nextConfig = {
   poweredByHeader: false,
   env: {
     NEXT_PUBLIC_API_URL: 'https://doc.nozomi-th.com/api',
+    DB_HOST: '43.229.132.209',
+    DB_USER: 'rootforbook',
+    DB_PASSWORD: '534jj7?cA',
+    DB_NAME: 'carbookingsystem',
   },
 }
 
