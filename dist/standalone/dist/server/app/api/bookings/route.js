@@ -1,0 +1,25 @@
+(()=>{var e={};e.id=1946,e.ids=[1946],e.modules={13878:e=>{function t(e){var t=Error("Cannot find module '"+e+"'");throw t.code="MODULE_NOT_FOUND",t}t.keys=()=>[],t.resolve=t,t.id=13878,e.exports=t},30517:e=>{"use strict";e.exports=require("next/dist/compiled/next-server/app-route.runtime.prod.js")},14300:e=>{"use strict";e.exports=require("buffer")},6113:e=>{"use strict";e.exports=require("crypto")},82361:e=>{"use strict";e.exports=require("events")},41808:e=>{"use strict";e.exports=require("net")},77282:e=>{"use strict";e.exports=require("process")},12781:e=>{"use strict";e.exports=require("stream")},71576:e=>{"use strict";e.exports=require("string_decoder")},39512:e=>{"use strict";e.exports=require("timers")},24404:e=>{"use strict";e.exports=require("tls")},57310:e=>{"use strict";e.exports=require("url")},73837:e=>{"use strict";e.exports=require("util")},59796:e=>{"use strict";e.exports=require("zlib")},19433:(e,t,r)=>{"use strict";r.r(t),r.d(t,{headerHooks:()=>m,originalPathname:()=>x,patchFetch:()=>D,requestAsyncStorage:()=>p,routeModule:()=>l,serverHooks:()=>g,staticGenerationAsyncStorage:()=>b,staticGenerationBailout:()=>h});var s={};r.r(s),r.d(s,{GET:()=>c,POST:()=>d});var o=r(95419),a=r(69108),n=r(99678),i=r(47033),u=r(78070);async function c(){try{let e=await (0,i.JT)(`
+      SELECT b.id, b.userId, b.carId, b.startDate, b.endDate, b.startTime, b.endTime, 
+             b.purpose, b.status, b.createdAt, b.destination,
+             u.name as userName, u.department as userDepartment, u.avatar as userAvatar,
+             c.name as carName, c.type as carType, c.licensePlate
+      FROM Bookings b
+      JOIN Users u ON b.userId = u.id
+      JOIN Cars c ON b.carId = c.id
+      ORDER BY b.createdAt DESC
+      `,[]);return u.Z.json(e.recordset)}catch(e){return console.error("Error fetching bookings:",e),u.Z.json({error:"Failed to fetch bookings"},{status:500})}}async function d(e){try{let{userId:t,carId:r,startDate:s,endDate:o,startTime:a,endTime:n,purpose:c,destination:d}=await e.json();if(!t||!r||!s||!o||!a||!n||!c)return u.Z.json({error:"Missing required fields"},{status:400});if((await (0,i.JT)(`
+      SELECT COUNT(*) as count 
+      FROM Bookings 
+      WHERE carId = ? 
+      AND status IN ('รออนุมัติ', 'อนุมัติแล้ว')
+      AND (
+        (startDate <= ? AND endDate >= ?) OR
+        (startDate <= ? AND endDate >= ?) OR
+        (startDate >= ? AND endDate <= ?)
+      )
+      `,[r,s,s,o,o,s,o])).recordset[0].count>0)return u.Z.json({error:"Car is not available for the selected dates"},{status:409});let l=(await (0,i.Fm)(`
+      INSERT INTO Bookings (userId, carId, startDate, endDate, startTime, endTime, purpose, destination, status)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'รออนุมัติ');
+      `,[t,r,s,o,a,n,c,d||null])).insertId;return await (0,i.JT)(`
+      UPDATE Cars SET status = 'มีการจอง' WHERE id = ?
+      `,[r]),u.Z.json({id:l,userId:t,carId:r,startDate:s,endDate:o,startTime:a,endTime:n,purpose:c,destination:d,status:"รออนุมัติ"},{status:201})}catch(e){return console.error("Error creating booking:",e),u.Z.json({error:"Failed to create booking"},{status:500})}}let l=new o.AppRouteRouteModule({definition:{kind:a.x.APP_ROUTE,page:"/api/bookings/route",pathname:"/api/bookings",filename:"route",bundlePath:"app/api/bookings/route"},resolvedPagePath:"C:\\xampp\\htdocs\\car-booking-system-110\\car-booking-system-110\\app\\api\\bookings\\route.ts",nextConfigOutput:"standalone",userland:s}),{requestAsyncStorage:p,staticGenerationAsyncStorage:b,serverHooks:g,headerHooks:m,staticGenerationBailout:h}=l,x="/api/bookings/route";function D(){return(0,n.patchFetch)({serverHooks:g,staticGenerationAsyncStorage:b})}},47033:(e,t,r)=>{"use strict";r.d(t,{Fm:()=>c,JT:()=>i,jB:()=>u});var s=r(63069);let o={host:"43.229.132.209",user:process.env.DB_USER||"rootforbook",password:process.env.DB_PASSWORD||"534jj7?cA",database:process.env.DB_NAME||"carbookingsystem",waitForConnections:!0,connectionLimit:10,queueLimit:0},a=null;async function n(){if(!a)try{console.log("Creating database pool with config:",{host:o.host,user:o.user,database:o.database}),a=s.createPool(o),(await a.getConnection()).release(),console.log("Database pool created and tested successfully")}catch(e){throw console.error("Error creating database pool:",e),Error(`Database connection failed: ${e instanceof Error?e.message:String(e)}`)}return a}async function i(e,t=[]){try{let r=await n();console.log("Executing query:",e,"with params:",t);let[s]=await r.execute(e,t);return{recordset:s}}catch(e){throw console.error("Query execution error:",e),e}}async function u(e,t=[]){try{let{recordset:r}=await i(e,t);return r.length>0?r[0]:null}catch(e){throw console.error("Query execution error:",e),e}}async function c(e,t=[]){try{let r=await n();console.log("Executing insert:",e,"with params:",t);let[s]=await r.execute(e,t);return{insertId:s.insertId}}catch(e){throw console.error("Insert execution error:",e),e}}}};var t=require("../../../webpack-runtime.js");t.C(e);var r=e=>t(t.s=e),s=t.X(0,[1638,6206,3069],()=>r(19433));module.exports=s})();
